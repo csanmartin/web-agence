@@ -1,0 +1,21 @@
+.consultants-list {
+  max-height: 200px;
+  overflow: scroll;
+}
+
+.icon-rotation {
+  transform: rotate(90deg);
+}
+
+.card-consultant mat-card-content {
+  margin: 0;
+}
+
+.card-consultant .data-consultant {
+  padding: 24px;
+  border: solid .5px rgba(0, 0, 0, 0.12);
+}
+
+.card-consultant .data-consultant.head {
+  background-color: #f3f3f3;
+}

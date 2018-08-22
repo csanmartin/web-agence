@@ -1,0 +1,20 @@
+.brand {
+  background: url("../assets/images/agence.png") right center no-repeat;
+  background-size: contain;
+  width: 120px;
+  height: 64px;
+}
+
+.dark-brand {
+  background: url("../assets/images/logo.gif") center center no-repeat;
+  background-size: contain;
+  margin: 0.5em;
+  width: 180px;
+  min-height: 80px;
+}
+
+.content {
+  margin: 0.5em;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  min-height: calc(100vh - 64px - 1.1em);
+}

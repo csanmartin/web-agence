@@ -1,0 +1,213 @@
+<mat-tab-group>
+  <mat-tab label="POR CONSULTOR">
+    <mat-card class="mat-card-custom" style="max-width: 500px">
+      <mat-card-content style="padding-top: 14px" fxLayout="row">
+        <mat-form-field fxFlex class="margin" appearance="outline" (click)="idp.open()">
+          <mat-label>Periodo Inicial</mat-label>
+          <input matInput [matDatepicker]="idp" [min]="minDate" [max]="finalDate" placeholder="Fecha"
+                 [value]="initialDate" required readonly>
+          <mat-datepicker-toggle matSuffix [for]="idp"></mat-datepicker-toggle>
+          <mat-datepicker #idp disabled="false"
+                          startView="multi-year"
+                          (monthSelected)="breakDatePicker($event, idp, 'initial')"
+                          panelClass="month-picker">
+          </mat-datepicker>
+        </mat-form-field>
+        <mat-form-field fxFlex class="margin" appearance="outline" (click)="fdp.open()">
+          <mat-label>Periodo Final</mat-label>
+          <input matInput [matDatepicker]="fdp" [min]="initialDate" [max]="maxDate" placeholder="Fecha"
+                 [value]="finalDate" required readonly>
+          <mat-datepicker-toggle matSuffix [for]="fdp"></mat-datepicker-toggle>
+          <mat-datepicker #fdp disabled="false"
+                          startView="multi-year"
+                          (monthSelected)="breakDatePicker($event, fdp, 'final')"
+                          panelClass="month-picker">
+          </mat-datepicker>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+    <div fxLayout="row" [fxLayout.lt-md]="'column'">
+      <mat-card class="mat-card-custom" fxFlex>
+        <mat-card-header>
+          Consultores
+        </mat-card-header>
+        <mat-card-content>
+          <mat-selection-list class="consultants-list"
+                              (selectionChange)="selectConsultant($event, 'allConsultants')">
+            <mat-list-option *ngFor="let consultant of consultants" [value]="consultant">
+              {{ consultant.userName }}
+            </mat-list-option>
+          </mat-selection-list>
+        </mat-card-content>
+      </mat-card>
+      <div fxLayout="column" [fxLayout.lt-md]="'row'" fxLayoutAlign="center">
+        <button mat-fab class="margin" (click)="moveConsultants('allConsultants')"
+                [disabled]="disabledButton('allConsultants')">
+          <mat-icon [ngClass.lt-md]="'icon-rotation'">fast_forward</mat-icon>
+        </button>
+        <button mat-fab class="margin" (click)="moveConsultants('consultantsFiltered')"
+                [disabled]="disabledButton('consultantsFiltered')">
+          <mat-icon [ngClass.lt-md]="'icon-rotation'">fast_rewind</mat-icon>
+        </button>
+      </div>
+      <mat-card class="mat-card-custom" fxFlex>
+        <mat-card-header>
+          Consultores Filtrados
+        </mat-card-header>
+        <mat-card-content>
+          <mat-selection-list class="consultants-list"
+                              (selectionChange)="selectConsultant($event, 'consultantsFiltered')">
+            <mat-list-option *ngFor="let consultant of consultantsFiltered" [value]="consultant">
+              {{ consultant.userName }}
+            </mat-list-option>
+          </mat-selection-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="end">
+      <button mat-flat-button color="primary" class="margin" (click)="getReport()"
+              [disabled]="disabledButton('report')">
+        <mat-icon style="margin-top: -3px">description</mat-icon>
+        Relatório
+      </button>
+      <button mat-flat-button color="primary" class="margin" (click)="getLineBarChart()"
+              [disabled]="disabledButton()">
+        <mat-icon style="margin-top: -3px">bar_chart</mat-icon>
+        Gráfico
+      </button>
+      <button mat-flat-button color="primary" class="margin" (click)="getPieChart()"
+              [disabled]="disabledButton()">
+        <mat-icon style="margin-top: -3px">pie_chart</mat-icon>
+        Pizza
+      </button>
+    </div>
+    <br>
+    <div fxLayout="column" *ngIf="report">
+      <mat-card *ngFor="let consultant of consultantsResult" class="mat-card-custom card-consultant">
+        <mat-card-header>
+          {{ consultant.userName }}
+        </mat-card-header>
+        <mat-card-content>
+          <div fxLayout="row" [fxLayout.lt-md]="'column'" fxShow [fxShow.lt-md]="false">
+            <div fxFlex class="data-consultant head">
+              <b>Período</b>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <b>Receita Líquida</b>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <b>Custo Fixo</b>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <b>Comissão</b>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <b>Lucro</b>
+            </div>
+          </div>
+          <div *ngFor="let commercialData of consultant.commercialData.years">
+            <div fxLayout="row" [fxLayout.lt-md]="'column'" *ngFor="let data of commercialData.data">
+              <div fxFlex class="data-consultant head">
+                <div fxLayout="row">
+                  <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                    <b>Período</b>
+                  </div>
+                  <div fxFlex>
+                    {{ getDate(commercialData.year, data.month) | date: 'MMMM yyyy' }}
+                  </div>
+                </div>
+              </div>
+              <div fxFlex class="data-consultant">
+                <div fxLayout="row">
+                  <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                    <b>Receita Líquida</b>
+                  </div>
+                  <div fxFlex>
+                    {{ data.gain | currency: 'BRL' }}
+                  </div>
+                </div>
+              </div>
+              <div fxFlex class="data-consultant">
+                <div fxLayout="row">
+                  <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                    <b>Custo Fixo</b>
+                  </div>
+                  <div fxFlex>
+                    {{ - data.fixedCost | currency: 'BRL' }}
+                  </div>
+                </div>
+              </div>
+              <div fxFlex class="data-consultant">
+                <div fxLayout="row">
+                  <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                    <b>Comissão</b>
+                  </div>
+                  <div fxFlex>
+                    {{ - data.commission | currency: 'BRL' }}
+                  </div>
+                </div>
+              </div>
+              <div fxFlex class="data-consultant">
+                <div fxLayout="row">
+                  <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                    <b>Lucro</b>
+                  </div>
+                  <div fxFlex [class.text-warn]="data.profit < 0">
+                    <b>{{ data.profit | currency: 'BRL' }}</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div fxLayout="row" [fxLayout.lt-md]="'column'">
+            <div fxFlex class="data-consultant head" fxShow [fxShow.lt-md]="false">
+              <b>Saldo</b>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <div fxLayout="row">
+                <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                  <b>Saldo Receita Líquida</b>
+                </div>
+                <div fxFlex>
+                  <b>{{ consultant.commercialData.totalGains | currency: 'BRL' }}</b>
+                </div>
+              </div>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <div fxLayout="row">
+                <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                  <b>Saldo Custo Fixo</b>
+                </div>
+                <div fxFlex>
+                  <b>{{ - consultant.commercialData.totalFixedCosts | currency: 'BRL' }}</b>
+                </div>
+              </div>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <div fxLayout="row">
+                <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                  <b>Saldo Comissão</b>
+                </div>
+                <div fxFlex>
+                  <b>{{ - consultant.commercialData.totalCommissions | currency: 'BRL' }}</b>
+                </div>
+              </div>
+            </div>
+            <div fxFlex class="data-consultant head">
+              <div fxLayout="row">
+                <div fxFlex fxShow="false" [fxShow.lt-md]="true">
+                  <b>Lucro</b>
+                </div>
+                <div fxFlex
+                     [ngClass]="(consultant.commercialData.totalProfits >= 0)?'text-accent':'text-warn'">
+                  <b>{{ consultant.commercialData.totalProfits | currency: 'BRL' }}</b>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-tab>
+  <mat-tab label="POR CLIENTE" disabled></mat-tab>
+</mat-tab-group>
