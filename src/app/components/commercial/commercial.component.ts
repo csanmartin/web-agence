@@ -55,8 +55,8 @@ export class CommercialComponent implements OnInit {
             this.finalDate = new Date(event.year(), event.month());
         }
         console.log(this.initialDate, this.initialDateReport);
-        if (this.initialDateReport.toString() !== this.initialDate.toString() ||
-            this.finalDateReport.toString() !== this.finalDate.toString()) {
+        if (this.initialDateReport !== this.initialDate ||
+            this.finalDateReport !== this.finalDate) {
             this.report = false;
         }
         datepicker.close();
