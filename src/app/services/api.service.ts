@@ -8,7 +8,8 @@ import {Observable} from 'rxjs';
 export class ApiService {
 
     // BASE URL API Restful
-    BASE_URL = 'http://localhost:3000/';
+    // BASE_URL = 'http://localhost:3000/';
+    BASE_URL = 'https://api2.csanmartinsr.com/';
 
     constructor(private _http: HttpClient) {
     }
